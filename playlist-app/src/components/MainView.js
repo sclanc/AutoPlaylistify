@@ -43,8 +43,10 @@ const MainView = ({
         }
     }, [user, setError]);
 
+    const removeGenerator = (id) => setGenerators((generators) => generators.filter((g) => g.id !== id));
+
     const toggleModal = () => setShowNew((prev) => !prev);
-    const generatorCards = generators ? generators.map((gen => <GeneratorCard generator={gen} at={at} setError={setError} edit={(formData) => { setGenToEdit(formData); toggleModal();}} />)) : null;
+    const generatorCards = generators ? generators.map((gen => <GeneratorCard generator={gen} at={at} setError={setError} removeGenerator={removeGenerator} edit={(formData) => { setGenToEdit(formData); toggleModal();}} />)) : null;
     const NewGen = React.forwardRef((props, ref) => <NewGenerator  {...props} ref={ref} />)
     if (hide) return null;
     return (
@@ -63,8 +65,8 @@ const MainView = ({
                         </Typography>
                     </div>}
             </div>
-            <Snackbar open={showSuccess} autoHideDuration={6000} onClose={() => showSuccess(false)}>
-                <MuiAlert elevation={6} variant="filled" onClose={() => showSuccess(false)} severity="success">
+            <Snackbar open={showSuccess} autoHideDuration={6000} onClose={() => setShowSuccess(false)}>
+                <MuiAlert elevation={6} variant="filled" onClose={() => setShowSuccess(false)} severity="success">
                         Your playlist generator has been saved
                 </MuiAlert>
             </Snackbar>
@@ -101,6 +103,7 @@ export default MainView;
 
  remaining todos/ bugs
  - generes aren't transitioning correctly
+ - limit not being passed to db
  - duplicate key update not working on generator? 
  - delete query and endpoint
  - search endpoint and page

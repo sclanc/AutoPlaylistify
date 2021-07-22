@@ -25,7 +25,7 @@ module.exports.DB = class {
                 return `INSERT INTO AutoPlaylistify.GENERATOR (${columns}) VALUES (${values}) ON DUPLICATE KEY UPDATE ${updates}`
             },
             getGenerators: (args) => `SELECT * FROM AutoPlaylistify.GENERATOR WHERE user_id = ${args.user_id}`,
-            deleteGenerators: (args) => ``
+            deleteGenerators: (args) => `DELETE FROM AutoPlaylistify.GENERATOR WHERE id = ${args.id};`,
         }
     }
 

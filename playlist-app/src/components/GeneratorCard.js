@@ -12,12 +12,12 @@ import {
   CardActions,
   CardContent,
   CardMedia,
-  Button,
   Typography,
   Modal,
   Tooltip,
   IconButton,
 } from '@material-ui/core/';
+import Tracks from './Tracks';
 
 
 const useStyles = makeStyles({
@@ -31,6 +31,7 @@ const useStyles = makeStyles({
 });
 
  const  GeneratorCard = ({
+    removeGenerator,
     generator, // use custom hook and deep equals to properly rerender.
     at,
     setError,
@@ -39,7 +40,7 @@ const useStyles = makeStyles({
   const classes = useStyles();
 
   const [tracks, setTracks] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
+  // const [isLoading, setIsLoading] = useState(true);
   const [artwork, setArtwork] = useState([]);
   const [featuredArtists, setFeatured] = useState([]);
   const [showTracks, setShowTracks] = useState(false);
@@ -146,7 +147,23 @@ const useStyles = makeStyles({
         {renderArt(3)}
       </div>
     </div>
-  )
+  ) 
+
+  const deleteGenerator = () => {
+    try {
+      fetch(`http://localhost:8888/delete?id=${generator.id}`)
+      .then(response => response.json())
+      .then(json => {
+          if (json.error) {
+              throw json.error;
+          } else {
+            removeGenerator(generator.id);
+          }
+      })
+  } catch(e) {
+      setError(e);
+  }
+  }
 
   return (
     <div style={{paddingTop: '25px'}}>
@@ -196,7 +213,7 @@ const useStyles = makeStyles({
             </IconButton>
           </Tooltip>
           <Tooltip title="Delete your playlist generator">
-            <IconButton aria-label="delete">
+            <IconButton onClick={deleteGenerator}aria-label="delete">
               <DeleteIcon color="primary" />
             </IconButton>
           </Tooltip>
@@ -206,7 +223,7 @@ const useStyles = makeStyles({
       open={showTracks}
       onBackdropClick={toggleModal}
     > 
-
+      <Tracks tracks={tracks} saveToSpotify={saveToSpotify} at={at}/>
     </Modal>
     </div>
   );
