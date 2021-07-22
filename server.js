@@ -1,81 +1,170 @@
-const express = require('express');
-const cors = require('cors');
-const bodyParser = require('body-parser');
-const logger = require('morgan');
-const Data = require('./data');
+/**
+ * https://developer.spotify.com/web-api/authorization-guide/#authorization_code_flow
+ */
 
-const API_PORT = 3001;
-const app = express();
-app.use(cors());
-const router = express.Router();
+ var express = require('express');
+ var request = require('request');
+ var cors = require('cors');
+ var querystring = require('querystring');
+ var cookieParser = require('cookie-parser');
+ var Generator = require('./Generator');
+ var DB = require('./DB').DB;
+ var bodyParser = require('body-parser');
+ 
+ var args = process.argv.slice(2);
+ var client_id = 'afe4eb50b0ae42ccaaf27ae1ffa13ff7';
+ var client_secret = args[0];
+ var redirect_uri = 'http://localhost:8888/callback';
+ var weburl = 'http://localhost:3000/';
+ var rds_password = args[1];
+ var jsonParser = bodyParser.json();
 
-const dbRoute = ''
 
-const db = {};
+ var randomStringForCookie = function(length) {
+   var text = '';
+   var possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+ 
+   for (var i = 0; i < length; i++) {
+     text += possible.charAt(Math.floor(Math.random() * possible.length));
+   }
+   return text;
+ };
+ var stateKey = 'spotify_auth_state';
+ var app = express();
 
-db.once('open', () => console.log('connected to the database'));
+ app.use(express.static(__dirname + '/public'))
+    .use(cors())
+    .use(cookieParser())
+    .use(bodyParser());
+ 
+ app.get('/login', function(req, res) {
+ 
+   var state = randomStringForCookie(16);
+   res.cookie(stateKey, state);
+   res.header("Access-Control-Allow-Origin", "*");
+ 
+   var scope = 'user-read-private user-read-email playlist-modify-public playlist-modify-private';
+   res.redirect('https://accounts.spotify.com/authorize?' +
+     querystring.stringify({
+       response_type: 'code',
+       client_id: client_id,
+       scope: scope,
+       redirect_uri: redirect_uri,
+       state: state
+     }));
+ });
+ 
+ app.get('/callback', function(req, res) {
+   var code = req.query.code || null;
+   var state = req.query.state || null;
+   var storedState = req.cookies ? req.cookies[stateKey] : null;
+ 
+   if (state === null || state !== storedState) {
+     res.redirect(weburl +
+       querystring.stringify({
+         error: 'state_mismatch'
+       }));
+   } else {
+     res.clearCookie(stateKey);
+     var authOptions = {
+       url: 'https://accounts.spotify.com/api/token',
+       form: {
+         code: code,
+         redirect_uri: redirect_uri,
+         grant_type: 'authorization_code'
+       },
+       headers: {
+         'Authorization': 'Basic ' + (new Buffer(client_id + ':' + client_secret).toString('base64'))
+       },
+       json: true
+     };
+ 
+     request.post(authOptions, function(error, response, body) {
+       if (!error && response.statusCode === 200) { 
+         var access_token = body.access_token,
+             refresh_token = body.refresh_token; 
+         res.redirect(weburl +
+           querystring.stringify({
+             access_token: access_token,
+             refresh_token: refresh_token
+           }));
+       } else {
+         res.redirect(weburl +
+           querystring.stringify({
+             error: 'invalid_token'
+           }));
+       }
+     });
+   }
+ });
+ 
+ app.get('/refresh_token', function(req, res) {
+ 
+   // requesting access token from refresh token
+   var refresh_token = req.query.refresh_token;
+   var authOptions = {
+     url: 'https://accounts.spotify.com/api/token',
+     headers: { 'Authorization': 'Basic ' + (new Buffer(client_id + ':' + client_secret).toString('base64')) },
+     form: {
+       grant_type: 'refresh_token',
+       refresh_token: refresh_token
+     },
+     json: true
+   };
+ 
+   request.post(authOptions, function(error, response, body) {
+     if (!error && response.statusCode === 200) {
+       var access_token = body.access_token;
+       res.send({
+         'access_token': access_token
+       });
+     }
+   });
+ });
+ 
 
-// checks if connection with the database is successful
-db.on('error', console.error.bind(console, 'MongoDB connection error:'));
-
-// (optional) only made for logging and
-// bodyParser, parses the request body to be a readable json format
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json());
-app.use(logger('dev'));
-
-// this is our get method
-// this method fetches all available data in our database
-router.get('/getData', (req, res) => {
-  Data.find((err, data) => {
-    if (err) return res.json({ success: false, error: err });
-    return res.json({ success: true, data: data });
+ app.post('/user', jsonParser, function(req, res){
+  const db = new DB();
+  db.connect(rds_password);
+  const test = db.query('user', req.body, function(response) {
+    const r = {...response, success: true}
+    res.send(r);
   });
-});
+  db.end();
+ })
 
-// this is our update method
-// this method overwrites existing data in our database
-router.post('/updateData', (req, res) => {
-  const { id, update } = req.body;
-  Data.findByIdAndUpdate(id, update, (err) => {
-    if (err) return res.json({ success: false, error: err });
-    return res.json({ success: true });
-  });
-});
-
-// this is our delete method
-// this method removes existing data in our database
-router.delete('/deleteData', (req, res) => {
-  const { id } = req.body;
-  Data.findByIdAndRemove(id, (err) => {
-    if (err) return res.send(err);
-    return res.json({ success: true });
-  });
-});
-
-// this is our create methid
-// this method adds new data in our database
-router.post('/putData', (req, res) => {
-  let data = new Data();
-
-  const { id, message } = req.body;
-
-  if ((!id && id !== 0) || !message) {
-    return res.json({
-      success: false,
-      error: 'INVALID INPUTS',
+ app.post('/generator', jsonParser, function(req,res) {
+    const db = new DB();
+    db.connect(rds_password);
+    db.query('saveGenerator', req.body, function (response) {
+      if (response.error) {
+        res.send(response);
+      } else {
+        const r = {...response, success: true}
+        res.send(r);
+      }
     });
-  }
-  data.message = message;
-  data.id = id;
-  data.save((err) => {
-    if (err) return res.json({ success: false, error: err });
-    return res.json({ success: true });
-  });
-});
+    db.end();
+ })
+ app.get('/generator', function(req,res){
+   if (req.query.user_id) {
+    const db = new DB();
+    db.connect(rds_password);
+    db.query('getGenerators', req.query, function (response) {
+      if (response.error) {
+        res.send(response);
+      } else {
+        const r = {...response}
+        res.send(r);
+      }
+    });
+    db.end();
+   } else {
+     res.send({error: 'user_id not provided'});
+   }
 
-// append /api for our http requests
-app.use('/api', router);
+ })
 
-// launch our backend into a port
-app.listen(API_PORT, () => console.log(`LISTENING ON PORT ${API_PORT}`));
+ console.log('Listening on 8888');
+ app.listen(8888);
+ 
