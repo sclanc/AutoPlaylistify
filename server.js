@@ -43,7 +43,7 @@
    res.cookie(stateKey, state);
    res.header("Access-Control-Allow-Origin", "*");
  
-   var scope = 'user-read-private user-read-email playlist-modify-public playlist-modify-private';
+   var scope = 'user-read-private user-read-email user-read-private playlist-modify-public playlist-modify-private streaming';
    res.redirect('https://accounts.spotify.com/authorize?' +
      querystring.stringify({
        response_type: 'code',
@@ -152,7 +152,7 @@
     db.connect(rds_password);
     db.query('getGenerators', req.query, function (response) {
       if (response.error) {
-        res.send(response);
+        res.send({error: response.error});
       } else {
         const r = {...response}
         res.send(r);
@@ -164,6 +164,27 @@
    }
 
  })
+
+ app.get('/delete', function(req,res){
+  if (req.query.id) {
+   const db = new DB();
+   db.connect(rds_password);
+   db.query('deleteGenerators', req.query, function (response) {
+     if (response.error) {
+       res.send({error: response.error});
+     } else {
+       const r = {...response}
+       res.send(r);
+     }
+   });
+   db.end();
+  } else {
+    res.send({error: 'user_id not provided'});
+  }
+
+})
+
+ 
 
  console.log('Listening on 8888');
  app.listen(8888);
