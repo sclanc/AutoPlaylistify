@@ -1,38 +1,163 @@
-.App {
-  text-align: center;
+.MuiAppBar-root {
+  display: flex;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  padding: 15px;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+::-webkit-scrollbar {
+  width: 0;  /* Remove scrollbar space */
+  background: transparent;  /* Optional: just make scrollbar invisible */
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+
+.NewGen__modal {
+  background-color: #3d2f3c;
+    margin: auto;
+    width: 60%;
+    height: 100vh;
+    overflow-y: scroll;
 }
 
-.App-header {
-  background-color: #282c34;
+.NewGen__container {
+  padding: 15px;
+}
+
+.NewGen__required {
+  display: flex;
+  flex-direction: column;
+}
+
+.NewGen__chips {
+  width: 300px;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.MuiChip-root {
+  margin: 2px;
+}
+
+.NewGen__optional {
+  display: flex;
+  flex-direction: column;
+  padding-left: 55px;
+  padding-top: 15px;
+}
+
+.NewGen__required-group {
+  padding-left: 55px;
+  padding-bottom: 10px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  width: 700px;
+}
+
+.NewGen__submit {
+  display: flex;
+  justify-content: center;
+}
+
+.MaterialSlider {
+  width: 250px !important;
+  padding-left: 8px !important;
+}
+
+.Search {
+  display: flex;
+  align-items: center;
+  width: 195px;
+  height: fit-content;
+  justify-content: space-between;
+  background: #8d99ae;
+  border-radius: 5px;
+}
+
+.MuiFormControl-marginNormal {
+  width: 300px;
+}
+
+.MuiDivider-middle {
+    margin-top: 15px;
+    margin-left: 0 !important;
+    margin-right: 16px;
+}
+.MuiTypography-root {
+  width: fit-content !important;
+}
+
+.Splash {
+  height: fit-content;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  width: 100%;
+}
+
+.Splash__item {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    flex: 1;
+    padding-top: 30px;
+}
+.first {
+  margin: auto;
+  height: 300px;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  align-items: center;
+  display: flex;
+  width: 100%;
+  background-size: contain;
 }
 
-.App-link {
-  color: #61dafb;
+.first h2 {
+  width: 60% !important;
+  text-align: center;
+  font-size: 2.3rem !important;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.Splash__item-text {
+  width: 400px;
+  padding-top: 20px;
+}
+
+.Main {
+  height: fit-content;
+  min-height: 100vh;
+  padding: 40px;
+}
+
+.Main__activities {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.Main__noGenerators{
+  display: flex;
+    padding-top: 75px;
+    justify-content: center;
+    opacity: 50%;
+}
+
+.Main__GeneratorCards {
+  display: flex;
+  width: 90%;
+  margin: auto;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  padding-top: 25px;
+}
+
+.GeneratorCard__images {
+  width: 173px;
+  height: 160px;
+}
+
+.Splash__image {
+  box-shadow: -5px 4px 8px 3px #1c1719;
+  border-radius: 5px;
 }
