@@ -15,7 +15,7 @@
  var client_id = 'afe4eb50b0ae42ccaaf27ae1ffa13ff7';
  var client_secret = args[0];
  var redirect_uri = 'http://localhost:8888/callback';
- var weburl = 'http://localhost:3000/';
+ var weburl = 'http://localhost:3001/';
  var rds_password = args[1];
  var jsonParser = bodyParser.json();
 
@@ -126,6 +126,7 @@
  app.post('/user', jsonParser, function(req, res){
   const db = new DB();
   db.connect(rds_password);
+  console.log('USER: ', req.body);
   const test = db.query('user', req.body, function(response) {
     const r = {...response, success: true}
     res.send(r);
@@ -146,23 +147,54 @@
     });
     db.end();
  })
+
  app.get('/generator', function(req,res){
-   if (req.query.user_id) {
+   if (req.query.user_id || req.query.query) {
     const db = new DB();
     db.connect(rds_password);
-    db.query('getGenerators', req.query, function (response) {
-      if (response.error) {
-        res.send({error: response.error});
-      } else {
-        const r = {...response}
-        res.send(r);
-      }
-    });
+	if (req.query.user_id ) {
+		db.query('getGenerators', req.query, function (response) {
+			if (response.error) {
+			  res.send({error: response.error});
+			} else {
+			  const r = {...response}
+			  res.send(r);
+			}
+		  });
+	} else if (req.query.query) {
+		db.query('searchGenerators', req.query, function (response) {
+			if (response.error) {
+			  res.send({error: response.error});
+			} else {
+			  const r = {...response}
+			  res.send(r);
+			}
+		  });
+	}
+
     db.end();
    } else {
-     res.send({error: 'user_id not provided'});
+     res.send({error: 'user_id or query not provided'});
    }
 
+ })
+
+ //report
+
+ app.get('/report', function(req,res){
+	 const db = new DB();
+	 db.connect(rds_password);
+	 res.header("Access-Control-Allow-Origin", "*");
+	 db.query('report', null, function (response) {
+	   if (response.error) {
+		 res.send({error: response.error});
+	   } else {
+		 const r = {reportData: [...response]}
+		 console.log(r)
+		 res.send(r);
+	   }
+	 });
+	 db.end();
  })
 
  app.get('/delete', function(req,res){
