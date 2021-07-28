@@ -77,7 +77,7 @@ const  MaterialAutoComplete = ({
         options={options}
         getOptionLabel={getOptionLabel(type)}
         renderInput={(params) => (
-          <TextField {...params} label={label} helperText={label !== 'Name' ?  `1-5 seed ${label}`  : undefined } margin="normal" variant="outlined" value={value} onChange={handleChange} />
+          <TextField {...params} label={label} margin="normal" variant="outlined" value={value} onChange={handleChange} />
         )}
       />
     </div>

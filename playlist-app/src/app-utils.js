@@ -44,12 +44,6 @@ export const getGenres = (at) => (
   })
 );
 
-// formItemToGeneratorItem = (item, name, RequestParams) => {
-//   if (item[0]) {
-//     return item[0] === item[1] ? RequestParams[target_ + name]
-//   }
-// }
-
 export const formToGenerator = ({artists,
   tracks,
   genres,
@@ -70,16 +64,21 @@ export const formToGenerator = ({artists,
   timeSig,
   valence,
   market,
+  id,
   user_id}) => {
     const RequestParams = {};
     RequestParams.limit = limit[0];
     RequestParams.name = name;
     RequestParams.market = market;
+	if (id) {
+		RequestParams.id = id;
+	}
     RequestParams.user_id = user_id;
     RequestParams.seed_artists = artists;
     RequestParams.seed_tracks = tracks;
     RequestParams.seed_genres = genres.toString();
     if (danceability[0]) {
+		
       if (danceability[0] !== danceability[1]) {
         RequestParams.min_danceability = danceability[0] * .01;
         RequestParams.max_danceability = danceability[1] * .01;
@@ -130,10 +129,10 @@ export const formToGenerator = ({artists,
     }
     if (popularity[0]) {
       if (popularity[0] !== popularity[1]) {
-        RequestParams.min_popularity = popularity[0] * .01;
-        RequestParams.max_popularity = popularity[1] * .01;
+        RequestParams.min_popularity = popularity[0];
+        RequestParams.max_popularity = popularity[1];
       } else {
-        RequestParams.target_popularity = popularity[0] * .01;
+        RequestParams.target_popularity = popularity[0];
       }
     }
     if (speechiness[0]) {
@@ -184,9 +183,10 @@ export const formToGenerator = ({artists,
         RequestParams.target_loudness = loudness[0] * .01;
       }
     }
-
-    RequestParams.min_mode = mode[0];
-    RequestParams.max_mode = mode[1];
+	if (mode) { //fix this
+		RequestParams.min_mode = mode[0];
+		RequestParams.max_mode = mode[1];
+	}
     return RequestParams;
 }
 

@@ -4,7 +4,6 @@ module.exports.DB = class {
     constructor(pass, mysql) {
         this.connection = null;
         this.queries = {
-            test: 'SELECT 1 + 1 AS solution',
             user: (args) => `INSERT INTO AutoPlaylistify.USER (id, name, email, created, refresh_token, market) VALUES (${args.id}, '${args.display_name}', '${args.email}', NOW(), '${args.refresh_token}', '${args.country}') ON DUPLICATE KEY UPDATE name='${args.display_name}', email='${args.email}', refresh_token='${args.refresh_token}';`,
             saveGenerator: (args) => {
                 let columns = '', values = '', updates = '';
@@ -15,17 +14,20 @@ module.exports.DB = class {
                     if (i === 0) {
                         columns += key;
                         values += v;
-                        updates += key === 'id' ? '' : `${key}=${v} `;
+                        updates += `${key}=${v}`;
                     } else {
                         columns += `, ${key}`;
                         values += `, ${v}`;
-                        updates += key === 'id' ? '' : `, ${key}=${v}`;
+                        updates += `, ${key}=${v}`;
                     }
                 }
-                return `INSERT INTO AutoPlaylistify.GENERATOR (${columns}) VALUES (${values}) ON DUPLICATE KEY UPDATE ${updates}`
+                return `INSERT INTO AutoPlaylistify.GENERATOR (${columns}) VALUES (${values}) ON DUPLICATE KEY UPDATE ${updates}, created_modified=NOW()`
             },
             getGenerators: (args) => `SELECT * FROM AutoPlaylistify.GENERATOR WHERE user_id = ${args.user_id}`,
+			searchGenerators: (args) => `SELECT * FROM AutoPlaylistify.GENERATOR WHERE name LIKE '%${args.query}%' OR seed_artists LIKE '%${args.query}%' OR seed_genres LIKE '%${args.query}%' OR seed_tracks LIKE '%${args.query}%'`,
             deleteGenerators: (args) => `DELETE FROM AutoPlaylistify.GENERATOR WHERE id = ${args.id};`,
+			report: () => `SELECT u.name as name, g.created_modified as time, g.name as generatorName, g.seed_artists, g.seed_genres, g.seed_tracks FROM AutoPlaylistify.GENERATOR g
+			INNER JOIN AutoPlaylistify.USER u on u.id = g.user_id`,
         }
     }
 
@@ -51,7 +53,9 @@ module.exports.DB = class {
     query(key, args, callback) {
         if (this.queries[key]) {
             try {
-                 this.connection.query(this.queries[key](args), function (error, result, fields) {
+				const query = this.queries[key](args)
+				console.log('Query: ', `key: ${key}`, `args: ${JSON.stringify(args)}`, query);
+                 this.connection.query(query, function (error, result, fields) {
                     if (error) throw error;
                     callback(result);
                   });

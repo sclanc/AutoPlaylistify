@@ -10,7 +10,7 @@
       at,
       user,
       setError,
-      setGenerators,
+      fetchGenerators,
       closeSelf
   }) => {
     const [artists, setArtists] = useState([]);
@@ -35,25 +35,46 @@
 
     useEffect(() => {
         if(exisitingGenerator) {
-           setArtists(exisitingGenerator.artists);
-           setTracks(exisitingGenerator.tracks);
-           setGenres(exisitingGenerator.genres);
-           setName(exisitingGenerator.name);
-           setLimit(exisitingGenerator.limit);
-           setacousticness(exisitingGenerator.acousticness);
-           setDanceability(exisitingGenerator.danceability);
-           setDuration(exisitingGenerator.duration);
-           setEnergy(exisitingGenerator.energy);
-           setInstrumentalness(exisitingGenerator.instrumentalness);
-           setKey(exisitingGenerator.key);
-           setLiveness(exisitingGenerator.liveness);
-           setLoudness(exisitingGenerator.loudness);
-           setMode(exisitingGenerator.mode);
-           setPopularity(exisitingGenerator.popularity);
-           setSpeechiness(exisitingGenerator.speechiness);
-           setTempo(exisitingGenerator.tempo);
-           setTimeSig(exisitingGenerator.timeSig);
-           setValence(exisitingGenerator.valence);
+			const {
+				artists,
+				tracks,
+				genres,
+				name,
+				limit,
+				acousticness,
+				danceability,
+				duration,
+				energy,
+				instrumentalness,
+				key,
+				liveness,
+				loudness,
+				mode,
+				popularity,
+				speechiness,
+				tempo,
+				timeSig,
+				valence,
+			}  = exisitingGenerator.toFormData();
+           setArtists(artists);
+           setTracks(tracks);
+           setGenres(genres);
+           setName(name);
+           setLimit(limit);
+           setacousticness(acousticness);
+           setDanceability(danceability);
+           setDuration(duration);
+           setEnergy(energy);
+           setInstrumentalness(instrumentalness);
+           setKey(key);
+           setLiveness(liveness);
+           setLoudness(loudness);
+           setMode(mode);
+           setPopularity(popularity);
+           setSpeechiness(speechiness);
+           setTempo(tempo);
+           setTimeSig(timeSig);
+           setValence(valence);
         }
     }, [exisitingGenerator])
 
@@ -68,19 +89,21 @@
 
     const addSeeds = (seed, type) => {
         const i = getSeedIndex(seed, type);
+		const totalSeeds = artists.length + genres.length + tracks.length;
+		if (totalSeeds + 1 > 5) {
+			setError('Cannot exceed 5 seed Artist(s), Genre(s), or Track(s)');
+			return;
+		}
         switch(type) {
             case 'artist': 
-                if (artists.length >= 5) return;
                 if (i >= 0) return; 
                 setArtists((artists) => [...artists, seed]); 
                 break;
             case 'track':
-                if (tracks.length >= 5) return;
                 if (i >= 0) return;
                 setTracks((tracks) => [...tracks, seed]);
                 break;
             case 'genre':
-                if (genres.length >= 5) return;
                 if (i >= 0) return;
                 setGenres((genres) => [...genres, seed]);
                 break;
@@ -115,13 +138,14 @@
     ));
 
     const formIsValid = () => {
-        return name.length > 0 && artists.length > 0 && tracks.length > 0 && genres.length > 0;
+        return name.length > 0 && artists.length + tracks.length + genres.length > 0;
     }
 
     const saveGenerator = async () => {
         const market = user.country;
         const user_id = user.id;
         const gen = new Generator(formToGenerator({
+			id: exisitingGenerator ? exisitingGenerator.id : null,
             artists,
             tracks,
             genres,
@@ -159,7 +183,7 @@
               }).then(res => res.json()); 
 
               if (res.success) {
-                setGenerators((generators) => [ gen, ...generators]);
+                fetchGenerators();
               } else {
                   throw res.error;
               }
@@ -175,7 +199,7 @@
         <div className="NewGen__modal">
             <div className="NewGen__container">
                 <Typography variant="h2" component="h2" color="textSecondary" style={{paddingBottom: '20px'}}>Playlist Details</Typography>
-                <Typography variant="h6" component="div" color="textSecondary">Required Information</Typography>
+                <Typography variant="h6" component="div" color="textSecondary">Required Information (1-5 seed artists, tracks, or genres)</Typography>
                 <div className="NewGen__required">
                     <div className="NewGen__required-group">
                         <div>

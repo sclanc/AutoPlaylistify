@@ -17,44 +17,57 @@ const MainView = ({
     const [showSuccess, setShowSuccess] = useState(false);
     const [generators, setGenerators] = useState(null);
     const [genToEdit, setGenToEdit] = useState(null);
+	
+	const fetchGenerators = async () => {
+		try {
+			fetch(`http://localhost:8888/generator?user_id=${user.id}`)
+			.then(response => response.json())
+			.then(json => {
+				if (json.error) {
+					throw json.error;
+				} else {
+					const generators = [];
+					for (const gen in json) {
+						const g = new Generator({...json[gen], limit: json[gen].lim});
+						if (!g.playlist) {
+							g.run(at);
+						}
+						generators.push(g);
+					}
+					setGenerators(generators)
+				}
+			})
+		} catch(e) {
+			setError(e);
+		}
+	}
+
 
     useEffect(() => {
-        const getGenerators = async () => {
-            try {
-                fetch(`http://localhost:8888/generator?user_id=${user.id}`)
-                .then(response => response.json())
-                .then(json => {
-                    if (json.error) {
-                        throw json.error;
-                    } else {
-                        const generators = [];
-                        for (const gen in json) {
-                            generators.push(new Generator(json[gen]));
-                        }
-                        setGenerators(generators)
-                    }
-                })
-            } catch(e) {
-                setError(e);
-            }
-        }
         if (user) {
-            getGenerators()
+            fetchGenerators();
         }
     }, [user, setError]);
 
     const removeGenerator = (id) => setGenerators((generators) => generators.filter((g) => g.id !== id));
 
     const toggleModal = () => setShowNew((prev) => !prev);
-    const generatorCards = generators ? generators.map((gen => <GeneratorCard generator={gen} at={at} setError={setError} removeGenerator={removeGenerator} edit={(formData) => { setGenToEdit(formData); toggleModal();}} />)) : null;
+    const generatorCards = generators ? generators.map((gen => <GeneratorCard
+		generator={gen}
+		at={at}
+		setError={setError}
+		removeGenerator={removeGenerator}
+		edit={() => { setGenToEdit(gen); toggleModal();}} 
+		/>))
+		: null;
     const NewGen = React.forwardRef((props, ref) => <NewGenerator  {...props} ref={ref} />)
     if (hide) return null;
     return (
         <div className="Main">
             <div className="Main__activities">
                 <Search /*filter gen cards by value here, pass onKeyUp*/ />
-                <Fab color="primary" aria-label="add">
-                    <AddIcon onClick={toggleModal} />
+                <Fab color="primary" aria-label="add" onClick={toggleModal}>
+                    <AddIcon/>
                 </Fab>
             </div>
             <div className="Main__GeneratorCards">
@@ -74,7 +87,7 @@ const MainView = ({
                 open={showNew}
                 onBackdropClick={toggleModal}
             >   
-                <NewGen at={at} user={user} setError={setError} setGenerators={setGenerators} exisitingGenerator={genToEdit}
+                <NewGen at={at} user={user} setError={setError} fetchGenerators={fetchGenerators} exisitingGenerator={genToEdit}
                 closeSelf={
                     () => {
                         setShowNew(false);
@@ -92,22 +105,9 @@ export default MainView;
 
 
 /**
-
-•   code including inheritance, polymorphism, and encapsulation
-•   search functionality with multiple row results and displays
-•   a database component with the functionality to securely add, modify, and delete the data
-•   ability to generate reports with multiple columns, multiple rows, date-time stamp, and title doneish
-•   exception controls == add toasts for errors doneish
-•   validation functionality == submit validation for required fields done
-
-
  remaining todos/ bugs
- - generes aren't transitioning correctly
- - limit not being passed to db
- - duplicate key update not working on generator? 
- - delete query and endpoint
- - search endpoint and page
- - reports
+ - reports (add create/modify time to generators) multiple columns, multiple rows, date-time stamp, and title
+ - code including inheritance, polymorphism, and encapsulation
  - update deep equals on main activity
  - reauthentication on all auth endpoints
  * 

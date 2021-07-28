@@ -1,8 +1,15 @@
 import React, { useState, useEffect } from 'react';
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route
+} from "react-router-dom";
 import './App.css';
 import Header from './components/Header';
 import Splash from './components/Splash';
 import MainView from './components/MainView';
+import Discover from './components/Discover';
+import Reports from './components/Reports';
 import { Paper } from '@material-ui/core';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import { getUser } from './app-utils';
@@ -96,16 +103,37 @@ function Alert(props) {
     <React.Fragment>
       <CssBaseline />
       <ThemeProvider theme={theme}>
-          <Header user={user} />
-          <Paper>
-            <Splash hide={user} />
-            <MainView hide={!user} at={at} rt={rt} user={user} setError={setError}/> 
+	  <Router>
+	  	<Paper>
+		  <Header user={user} />
+			<Switch>
+			<Route exact path="/">
+				<React.Fragment>
+					<Splash hide={user} />
+					<MainView hide={!user} at={at} rt={rt} user={user} setError={setError}/> 
+				</React.Fragment>
+			</Route>
+			<Route path="/Discover">
+				<Discover at={at} setError={setError}/>
+			</Route>
+			<Route path="/Reporting">
+				<Reports setError={setError} />
+			</Route>
+			<Route>
+				<React.Fragment>
+					<Splash hide={user} />
+					<MainView hide={!user} at={at} rt={rt} user={user} setError={setError}/> 
+				</React.Fragment>
+			</Route>
+			</Switch>
+          
             <Snackbar open={showError} autoHideDuration={6000} onClose={handleClose}>
               <Alert onClose={handleClose} severity="error">
                 {error}
               </Alert>
             </Snackbar>
           </Paper>
+		</Router>
       </ThemeProvider>
     </React.Fragment>
   );

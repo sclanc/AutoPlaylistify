@@ -55,7 +55,7 @@ export default class Generator{
     this.market = market;
     this.seed_artists = typeof seed_artists === 'string' ? JSON.parse(seed_artists) : seed_artists;
     this.seed_tracks = typeof seed_tracks === 'string' ? JSON.parse(seed_tracks) : seed_tracks;
-    this.seed_genres = seed_genres.split(",");
+    this.seed_genres = seed_genres;
     this.min_danceability = min_danceability;
     this.min_duration_ms = min_duration_ms;
     this.min_energy = min_energy;
@@ -120,15 +120,12 @@ export default class Generator{
     async run(at, setError) {
         if (!at) return;
         try {
-            const response = await fetch(`https://api.spotify.com/v1/recommendations?name=${this.name}
-${this.format('user_id')}
+            const response = await fetch(`https://api.spotify.com/v1/recommendations?
 ${this.format('limit')}
-${this.format('name')}
 ${this.format('market')}
 ${this.format('seed_artists')}
 ${this.format('seed_tracks')}
 ${this.format('seed_genres')}
-${this.format('min_danceability')}
 ${this.format('min_duration_ms')}
 ${this.format('min_energy')}
 ${this.format('min_instrumentalness')}
@@ -143,7 +140,6 @@ ${this.format('min_valence')}
 ${this.format('min_acousticness')}
 ${this.format('min_loudness')}
 ${this.format('min_mode')}
-${this.format('max_danceability')}
 ${this.format('max_duration_ms')}
 ${this.format('max_energy')}
 ${this.format('max_instrumentalness')}
@@ -158,7 +154,6 @@ ${this.format('max_valence')}
 ${this.format('max_acousticness')}
 ${this.format('max_loudness')}
 ${this.format('max_mode')}
-${this.format('target_danceability')}
 ${this.format('target_duration_ms')}
 ${this.format('target_energy')}
 ${this.format('target_instrumentalness')}
@@ -199,9 +194,9 @@ ${this.format('target_loudness')}`, {
             lim: this.limit, 
             name: this.name, 
             market: this.market, 
-            seed_artists: JSON.stringify(this.seed_artists).replace(`'`, `\\'`), 
-            seed_tracks: JSON.stringify(this.seed_tracks).replace(`'`, `\\'`), 
-            seed_genres: JSON.stringify(this.seed_genres).replace(`'`, `\\'`), 
+            seed_artists: JSON.stringify(this.seed_artists).replace(`'`, `\\'`),
+            seed_tracks: JSON.stringify(this.seed_tracks).replace(`'`, `\\'`),
+            seed_genres: this.seed_genres,
             min_danceability: this.min_danceability, 
             min_duration_ms: this.min_duration_ms, 
             min_energy: this.min_energy, 
@@ -259,7 +254,7 @@ ${this.format('target_loudness')}`, {
         } 
         formData.artists = this.seed_artists;
         formData.tracks = this.seed_tracks;
-        formData.genres = this.seed_genres;
+        formData.genres = this.seed_genres.split(',');
         formData.name = this.name;
         formData.limit = [this.limit || 20];
         formData.danceability = scaling('danceability'); 

@@ -1,3 +1,7 @@
+
+a {
+	text-decoration: none
+}
 .MuiAppBar-root {
   display: flex;
   flex-direction: row !important;
@@ -159,4 +163,54 @@
 .Splash__image {
   box-shadow: -5px 4px 8px 3px #1c1719;
   border-radius: 5px;
+}
+
+.Tracks__artist {
+	display: flex;
+    align-items: center;
+}
+
+.Tracks__explicit {
+	padding: 0px 7px;
+    background-color: grey;
+    border-radius: 5px;
+    margin-right: 5px;
+}
+
+.Track {
+	display: flex;
+	padding-top: 25px;
+	align-items: center;
+}
+
+.Track__albumArt {
+	padding-right: 25px;
+}
+.Track__info {
+	flex: 1;
+}
+
+.Track__header {
+	display: flex;
+	padding-left: 150px;
+}
+.Track__header-item {
+	flex: 1;
+}
+
+.Discover {
+	min-height: 100vh;
+}
+
+.Discover__field {
+	display: flex;
+	justify-content: center;
+	margin: auto;
+	width: 66%;
+}
+
+.Header__items {
+	display: flex;
+	justify-content: space-between;
+	width: 500px;
 }

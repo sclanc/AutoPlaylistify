@@ -6,6 +6,7 @@ import CachedIcon from '@material-ui/icons/Cached';
 import EditIcon from '@material-ui/icons/Edit';
 import SaveIcon from '@material-ui/icons/Save';
 import ScheduleIcon from '@material-ui/icons/Schedule';
+import FileCopyIcon from '@material-ui/icons/FileCopy';
 import { 
   Card,
   CardActionArea,
@@ -35,7 +36,8 @@ const useStyles = makeStyles({
     generator, // use custom hook and deep equals to properly rerender.
     at,
     setError,
-    edit
+    edit,
+	discover
  }) =>  {
   const classes = useStyles();
 
@@ -48,7 +50,6 @@ const useStyles = makeStyles({
 
   const getTracks = async () => {
     const tracks = await generator.run(at);
-    console.log(tracks);
     setTracks(tracks);
     getArtwork(tracks[0].artists[0].href);
     getArtwork(tracks[1].artists[0].href);
@@ -178,7 +179,7 @@ const useStyles = makeStyles({
             </Typography>
             <Typography variant="body2" color="textSecondary" component="p">
               <div>
-                {`Inspired by: ${generator.seed_genres.join(', ')}`}
+                {`Inspired by: ${generator.seed_genres}`}
               </div>
               <div>
                 {`Featuring: ${featuredArtists[0]}, ${featuredArtists[1]}, ${featuredArtists[2]}, and more.`}
@@ -197,33 +198,44 @@ const useStyles = makeStyles({
               <SaveIcon color="primary" />
             </IconButton>
           </Tooltip>
-          <Tooltip title="Schedule your playlist to refresh and save to your spotify account automatically. (still in development)">
-            <IconButton aria-label="Schedule">
-              <ScheduleIcon disabled color="primary" />
-            </IconButton>
-          </Tooltip>
-          <Tooltip title="Share this playlist with a friend (still in development)">
-            <IconButton aria-label="Share">
-              <ShareIcon color="primary" />
-            </IconButton>
-          </Tooltip>
-          <Tooltip title="Edit your playlist generator">
-            <IconButton onClick={() => edit(generator.toFormData())} aria-label="Edit">
-              <EditIcon color="primary" />
-            </IconButton>
-          </Tooltip>
-          <Tooltip title="Delete your playlist generator">
-            <IconButton onClick={deleteGenerator}aria-label="delete">
-              <DeleteIcon color="primary" />
-            </IconButton>
-          </Tooltip>
+		    {!discover &&
+				<React.Fragment>
+					<Tooltip title="Schedule your playlist to refresh and save to your spotify account automatically. (still in development)">
+						<IconButton aria-label="Schedule">
+						<ScheduleIcon disabled color="primary" />
+						</IconButton>
+					</Tooltip>
+					<Tooltip title="Share this playlist with a friend (still in development)">
+						<IconButton aria-label="Share">
+						<ShareIcon color="primary" />
+						</IconButton>
+					</Tooltip>
+					<Tooltip title="Edit your playlist generator">
+						<IconButton onClick={() => edit(generator)} aria-label="Edit">
+						<EditIcon color="primary" />
+						</IconButton>
+					</Tooltip>
+					<Tooltip title="Delete your playlist generator">
+						<IconButton onClick={deleteGenerator}aria-label="delete">
+						<DeleteIcon color="primary" />
+						</IconButton>
+					</Tooltip>
+				</React.Fragment>
+ 			}
+			{ discover &&
+				<Tooltip title="Copy this playlist to your Autoplaylistify account (still in development)">
+					<IconButton aria-label="copy">
+					<FileCopyIcon color="primary" />
+					</IconButton>
+				</Tooltip>
+			}
         </CardActions>
       </Card>
     <Modal 
       open={showTracks}
       onBackdropClick={toggleModal}
     > 
-      <Tracks tracks={tracks} saveToSpotify={saveToSpotify} at={at}/>
+      <Tracks tracks={tracks} saveToSpotify={saveToSpotify} getTracks={getTracks} at={at}/>
     </Modal>
     </div>
   );
