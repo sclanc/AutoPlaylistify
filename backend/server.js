@@ -13,10 +13,10 @@
  
  var args = process.argv.slice(2);
  var client_id = 'afe4eb50b0ae42ccaaf27ae1ffa13ff7';
- var client_secret = args[0];
+ var client_secret = args[0] || process.env.SPOT;
  var redirect_uri = 'http://localhost:8888/callback';
  var weburl = 'http://localhost:3001/';
- var rds_password = args[1];
+ var rds_password = args[1] || process.env.DB;
  var jsonParser = bodyParser.json();
 
 
