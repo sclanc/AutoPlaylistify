@@ -21,8 +21,8 @@ You will need to register your app and get your own credentials from the Spotify
 
 To do so, go to [your Spotify for Developers Dashboard](https://beta.developer.spotify.com/dashboard) and create your application. For the examples, we registered these Redirect URIs:
 
-* http://localhost:8888 (needed for the implicit grant flow)
-* http://localhost:8888/callback
+* http://www.autoplaylistify.com (needed for the implicit grant flow)
+* http://www.autoplaylistify.com/callback
 
 Once you have created your app, replace the `client_id`, `redirect_uri` and `client_secret` in the examples with the ones you get from My Applications.
 
@@ -32,4 +32,4 @@ In order to run the different examples, open the folder with the name of the flo
     $ cd authorization_code
     $ node app.js
 
-Then, open `http://localhost:8888` in a browser.
+Then, open `http://www.autoplaylistify.com` in a browser.
