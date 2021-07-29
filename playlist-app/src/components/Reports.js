@@ -60,7 +60,7 @@ import Paper from '@material-ui/core/Paper';
 					</TableRow>
 					</TableHead>
 					<TableBody>
-					{Object.entries(report).map((row) => (
+					{report.map((row) => (
 						<TableRow key={row.name + row.time}>
 						<TableCell component="th" scope="row">
 							{row.generatorName}
