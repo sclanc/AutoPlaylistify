@@ -15,7 +15,7 @@ const Header = ({
 		</Link>
         {!user ? (
         <div>
-            <a href="http://localhost:8888/login">
+            <a href="http://www.autoplaylistify.com/login">
                 <Typography variant="h4" component="h2" color="textPrimary">
                     Login
                 </Typography>

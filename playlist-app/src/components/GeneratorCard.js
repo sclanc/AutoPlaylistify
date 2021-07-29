@@ -152,7 +152,7 @@ const useStyles = makeStyles({
 
   const deleteGenerator = () => {
     try {
-      fetch(`http://localhost:8888/delete?id=${generator.id}`)
+      fetch(`http://www.autoplaylistify.com/delete?id=${generator.id}`)
       .then(response => response.json())
       .then(json => {
           if (json.error) {

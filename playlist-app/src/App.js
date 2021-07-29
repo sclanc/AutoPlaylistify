@@ -53,7 +53,7 @@ function Alert(props) {
         const user = await getUser(access_token, refresh_token);
         setUser(user);   
         if (user) {
-          fetch('http://localhost:8888/user', {
+          fetch('http://www.autoplaylistify.com/user', {
             method: 'POST',
             cache: 'no-cache',
             credentials: 'same-origin',

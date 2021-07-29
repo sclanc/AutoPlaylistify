@@ -20,7 +20,7 @@ const MainView = ({
 	
 	const fetchGenerators = async () => {
 		try {
-			fetch(`http://localhost:8888/generator?user_id=${user.id}`)
+			fetch(`http://www.autoplaylistify.com/generator?user_id=${user.id}`)
 			.then(response => response.json())
 			.then(json => {
 				if (json.error) {

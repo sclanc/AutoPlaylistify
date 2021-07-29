@@ -19,7 +19,7 @@ import GeneratorCard from './GeneratorCard';
 			return;
 		}
 		try {
-			fetch(`http://localhost:8888/generator?query=${value}`)
+			fetch(`http://www.autoplaylistify.com/generator?query=${value}`)
 			.then(response => response.json())
 			.then(json => {
 				if (json.error) {

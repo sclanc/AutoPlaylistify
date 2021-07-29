@@ -2,7 +2,7 @@ export const getUser = (at,rt) => (
     fetch('https://api.spotify.com/v1/me',{ headers: { 'Authorization': 'Bearer ' + at } })
     .then((res) => {
       if (res.status === 401) {
-        fetch(`http://localhost:8888/refresh_token?refresh_token='${rt}'`)
+        fetch(`http://www.autoplaylistify.com/refresh_token?refresh_token='${rt}'`)
         .then(response => response.json())
         .then(data => console.log('refresh: ', data))
         .then(data => data)

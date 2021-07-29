@@ -21,7 +21,7 @@ import Paper from '@material-ui/core/Paper';
 
 	const getReports = async () => {
 		try {
-			const repo = await fetch('http://localhost:8888/report')
+			const repo = await fetch('http://www.autoplaylistify.com/report')
 			.then((res) => res.json())
 			.then((json) => {
 				if (json.reportData) {

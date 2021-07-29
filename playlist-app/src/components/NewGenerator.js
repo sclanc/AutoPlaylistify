@@ -169,7 +169,7 @@
             user_id
         }));
         try {
-            const res = await fetch('http://localhost:8888/generator', {
+            const res = await fetch('http://www.autoplaylistify.com/generator', {
                 method: 'POST',
                 cache: 'no-cache',
                 credentials: 'same-origin',
