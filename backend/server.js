@@ -10,12 +10,13 @@
  var Generator = require('./Generator');
  var DB = require('./DB').DB;
  var bodyParser = require('body-parser');
+ const path = require('path');
  
  var args = process.argv.slice(2);
  var client_id = 'afe4eb50b0ae42ccaaf27ae1ffa13ff7';
  var client_secret = args[0] || process.env.SPOT;
  var redirect_uri = 'http://www.autoplaylistify.com/callback';
- var weburl = 'http://localhost:3001/';
+ var weburl = 'http://www.autoplaylistify.com/';
  var rds_password = args[1] || process.env.DB;
  var jsonParser = bodyParser.json();
 
@@ -37,8 +38,9 @@
     .use(cookieParser())
     .use(bodyParser());
  
+app.use(express.static(path.resolve(__dirname, './build')));
+
  app.get('/login', function(req, res) {
- 
    var state = randomStringForCookie(16);
    res.cookie(stateKey, state);
    res.header("Access-Control-Allow-Origin", "*");
@@ -122,6 +124,9 @@
    });
  });
  
+ app.get('*', (req, res) => {
+	res.sendFile(path.resolve(__dirname, './build', 'index.html'));
+  });
 
  app.post('/user', jsonParser, function(req, res){
   const db = new DB();
