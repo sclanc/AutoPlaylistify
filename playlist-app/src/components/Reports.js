@@ -68,7 +68,7 @@ import Paper from '@material-ui/core/Paper';
 						<TableCell align="right">{row.name}</TableCell>
 						<TableCell align="right">{row.time}</TableCell>
 						<TableCell align="right">{JSON.parse(row.seed_artists).map((artist) => artist.name).toString()}</TableCell>
-						<TableCell align="right">{JSON.parse(row.seed_genres).toString()}</TableCell>
+						<TableCell align="right">{row.seed_genres}</TableCell>
 						<TableCell align="right">{JSON.parse(row.seed_tracks).map((artist) => artist.name).toString()}</TableCell>
 						</TableRow>
 					))}
