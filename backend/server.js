@@ -123,10 +123,6 @@ app.use(express.static(path.resolve(__dirname, './build')));
      }
    });
  });
- 
- app.get('*', (req, res) => {
-	res.sendFile(path.resolve(__dirname, './build', 'index.html'));
-  });
 
  app.post('/user', jsonParser, function(req, res){
   const db = new DB();
@@ -195,7 +191,6 @@ app.use(express.static(path.resolve(__dirname, './build')));
 		 res.send({error: response.error});
 	   } else {
 		 const r = {reportData: [...response]}
-		 console.log(r)
 		 res.send(r);
 	   }
 	 });
@@ -221,8 +216,11 @@ app.use(express.static(path.resolve(__dirname, './build')));
 
 })
 
- 
 
- console.log('Listening on 8888');
+
+app.get('*', (req, res) => {
+	res.sendFile(path.resolve(__dirname, './build', 'index.html'));
+  });
+
  app.listen(process.env.PORT);
  
