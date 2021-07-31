@@ -4,13 +4,13 @@ module.exports.DB = class {
     constructor(pass, mysql) {
         this.connection = null;
         this.queries = {
-            user: (args) => `INSERT INTO AutoPlaylistify.USER (id, name, email, created, refresh_token, market) VALUES ('${this.connection.escape(args.id)}', '${this.connection.escape(args.display_name)}', '${this.connection.escape(args.email)}', NOW(), '${this.connection.escape(args.refresh_token)}', '${this.connection.escape(args.country)}') ON DUPLICATE KEY UPDATE name='${this.connection.escape(args.display_name)}', email='${this.connection.escape(args.email)}', refresh_token='${this.connection.escape(args.refresh_token)}';`,
+            user: (args) => `INSERT INTO AutoPlaylistify.USER (id, name, email, created, refresh_token, market) VALUES (${this.connection.escape(args.id)}, ${this.connection.escape(args.display_name)}, ${this.connection.escape(args.email)}, NOW(), ${this.connection.escape(args.refresh_token)}, ${this.connection.escape(args.country)}) ON DUPLICATE KEY UPDATE name='${this.connection.escape(args.display_name)}', email='${this.connection.escape(args.email)}', refresh_token='${this.connection.escape(args.refresh_token)}';`,
             saveGenerator: (args) => {
                 let columns = '', values = '', updates = '';
                 const entries = Object.entries(args);
                 for (let i = 0; i < entries.length; i ++) {
                     const [key, value] = entries[i];
-                    const v = typeof value === 'string' ? `'${this.connection.escape(value)}'` : value
+                    const v = typeof value === 'string' ? `${this.connection.escape(value)}` : value
                     if (i === 0) {
                         columns += key;
                         values += v;
