@@ -4,7 +4,7 @@ module.exports.DB = class {
     constructor(pass, mysql) {
         this.connection = null;
         this.queries = {
-            user: (args) => `INSERT INTO AutoPlaylistify.USER (id, name, email, created, refresh_token, market) VALUES (${args.id}, '${args.display_name}', '${args.email}', NOW(), '${args.refresh_token}', '${args.country}') ON DUPLICATE KEY UPDATE name='${args.display_name}', email='${args.email}', refresh_token='${args.refresh_token}';`,
+            user: (args) => `INSERT INTO AutoPlaylistify.USER (id, name, email, created, refresh_token, market) VALUES ('${args.id}', '${args.display_name}', '${args.email}', NOW(), '${args.refresh_token}', '${args.country}') ON DUPLICATE KEY UPDATE name='${args.display_name}', email='${args.email}', refresh_token='${args.refresh_token}';`,
             saveGenerator: (args) => {
                 let columns = '', values = '', updates = '';
                 const entries = Object.entries(args);
