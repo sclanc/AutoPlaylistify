@@ -4,7 +4,7 @@ module.exports.DB = class {
     constructor(pass, mysql) {
         this.connection = null;
         this.queries = {
-            user: (args) => `INSERT INTO AutoPlaylistify.USER (id, name, email, created, refresh_token, market) VALUES (${this.connection.escape(args.id)}, ${this.connection.escape(args.display_name)}, ${this.connection.escape(args.email)}, NOW(), ${this.connection.escape(args.refresh_token)}, ${this.connection.escape(args.country)}) ON DUPLICATE KEY UPDATE name='${this.connection.escape(args.display_name)}', email='${this.connection.escape(args.email)}', refresh_token='${this.connection.escape(args.refresh_token)}';`,
+            user: (args) => `INSERT INTO AutoPlaylistify.USER (id, name, email, created, refresh_token, market) VALUES (${this.connection.escape(args.id)}, ${this.connection.escape(args.display_name)}, ${this.connection.escape(args.email)}, NOW(), ${this.connection.escape(args.refresh_token)}, ${this.connection.escape(args.country)}) ON DUPLICATE KEY UPDATE name=${this.connection.escape(args.display_name)}, email=${this.connection.escape(args.email)}, refresh_token=${this.connection.escape(args.refresh_token)};`,
             saveGenerator: (args) => {
                 let columns = '', values = '', updates = '';
                 const entries = Object.entries(args);
@@ -23,8 +23,8 @@ module.exports.DB = class {
                 }
                 return `INSERT INTO AutoPlaylistify.GENERATOR (${columns}) VALUES (${values}) ON DUPLICATE KEY UPDATE ${updates}, created_modified=NOW()`
             },
-            getGenerators: (args) => `SELECT * FROM AutoPlaylistify.GENERATOR WHERE user_id = '${args.user_id}'`,
-			searchGenerators: (args) => `SELECT * FROM AutoPlaylistify.GENERATOR WHERE name LIKE '%${this.connection.escape(args.query)}%' OR seed_artists LIKE '%${this.connection.escape(args.query)}%' OR seed_genres LIKE '%${this.connection.escape(args.query)}%' OR seed_tracks LIKE '%${this.connection.escape(args.query)}%'`,
+            getGenerators: (args) => `SELECT * FROM AutoPlaylistify.GENERATOR WHERE user_id = ${this.connection.escape(args.user_id)}`,
+			searchGenerators: (args) => `SELECT * FROM AutoPlaylistify.GENERATOR WHERE name LIKE ${this.connection.escape(`%${args.query}%`)} OR seed_artists LIKE ${this.connection.escape(`%${args.query}%`)} OR seed_genres LIKE ${this.connection.escape(`%${args.query}%`)} OR seed_tracks LIKE ${this.connection.escape(`%${args.query}%`)}`,
             deleteGenerators: (args) => `DELETE FROM AutoPlaylistify.GENERATOR WHERE id = '${args.id}';`,
 			report: () => `SELECT u.name as name, g.created_modified as time, g.name as generatorName, g.seed_artists, g.seed_genres, g.seed_tracks FROM AutoPlaylistify.GENERATOR g
 			INNER JOIN AutoPlaylistify.USER u on u.id = g.user_id`,
