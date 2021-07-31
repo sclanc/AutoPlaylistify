@@ -450,7 +450,7 @@
                         marks={[
                             {
                                 value: 0,
-                                label: 'no audiance'
+                                label: 'no audience'
                             },
                             {
                                 value: 66,
@@ -458,7 +458,7 @@
                             },
                             {
                                 value: 100,
-                                label: 'large, excited audiance'
+                                label: 'large, excited audience'
                             }
                         ]}
                         description="Detects the presence of an audience in the recording. A value above 80 provides strong likelihood that the track is live."

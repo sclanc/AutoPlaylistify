@@ -13,7 +13,7 @@ const Splash = ({
             <div className="Splash__item">
                 <div className="first" style={{backgroundImage: `url(${soundwave})`}}>
                     <Typography variant="h3" component="h2" color="textPrimary">
-                        Harness the power of Spotify's Recomendations System to discover new music your way!
+                        Harness the power of Spotify's Recommendations System to discover new music your way!
                     </Typography>
                 </div>   
             </div>
@@ -21,10 +21,10 @@ const Splash = ({
                 <img className="Splash__image" src={sliders} alt="sliders"/>
                 <div className="Splash__item-text">
                     <Typography variant="h5" component="h2" color="textPrimary">
-                        Perfect your recomendations, by optomizing for anything from popularity, and dancability, to tempo, time signature, and much more. 
+                        Perfect your recommendations, by optimizing for anything from popularity, and dancability, to tempo, time signature, and much more. 
                     </Typography>
                     <Typography variant="h5" component="h2" color="textPrimary" style={{paddingTop: '60px'}}>
-                            Save your recomendation preferences, and use them to create playlists. You can even save them to your spotify account!
+                            Save your recommendation preferences and use them to create playlists. You can even save them to your Spotify account!
                     </Typography>
                 </div>
             </div>
@@ -37,7 +37,7 @@ const Splash = ({
                     </div>
                     <div className="Splash__item-text" style={{paddingTop: '60px'}}>
                         <Typography variant="h5" component="h2" color="textPrimary">
-                            Log in with your Spotify account to get Started.
+                            Log in with your Spotify account to get started.
                         </Typography>
                     </div>
                 </div>

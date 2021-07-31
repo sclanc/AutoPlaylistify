@@ -106,7 +106,6 @@ export default MainView;
 
 /**
  remaining todos/ bugs
- - reports (add create/modify time to generators) multiple columns, multiple rows, date-time stamp, and title
  - code including inheritance, polymorphism, and encapsulation
  - update deep equals on main activity
  - reauthentication on all auth endpoints
